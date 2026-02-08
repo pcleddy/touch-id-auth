@@ -19,6 +19,7 @@ from pydantic import BaseModel
 from webauthn import (
     generate_authentication_options,
     generate_registration_options,
+    options_to_json,
     verify_authentication_response,
     verify_registration_response,
 )
@@ -182,7 +183,7 @@ async def register_start(body: RegisterStartRequest, request: Request, response:
     challenges[f"{session_id}_username"] = username.encode()
 
     # Serialize options to JSON-compatible dict
-    options_json = json.loads(options.model_dump_json())
+    options_json = json.loads(options_to_json(options))
 
     return {"options": options_json}
 
@@ -264,7 +265,7 @@ async def login_start(body: LoginStartRequest, request: Request, response: Respo
     challenges[session_id] = options.challenge
     challenges[f"{session_id}_username"] = username.encode()
 
-    options_json = json.loads(options.model_dump_json())
+    options_json = json.loads(options_to_json(options))
     return {"options": options_json}
 
 
